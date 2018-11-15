@@ -154,6 +154,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @param stdClass $data
      * @param stdClass $course
      * @param int $oldid
+     * @return void
      */
     public function restore_instance(restore_enrolments_structure_step $step, stdClass $data, $course, $oldid) {
         global $DB;
@@ -180,11 +181,11 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @param stdClass $instance
      * @param int $userid
      * @param int $oldinstancestatus
+     * @return void
      */
     public function restore_user_enrolment(restore_enrolments_structure_step $step, $data, $instance, $userid, $oldinstancestatus) {
         if ($step->get_task()->get_target() == backup::TARGET_NEW_COURSE) {
             $this->enrol_user($instance, $userid, null, $data->timestart, $data->timeend, $data->status);
-            // mark_user_dirty($userid);
         }
     }
 
@@ -192,7 +193,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * Is it possible to add enrol instance via standard UI?
      *
      * @param int $courseid id of the course to add the instance to
-     * @return boolean
+     * @return bool
      */
     public function can_add_instance($courseid) {
         return has_capability('enrol/coursecompleted:manage', context_course::instance($courseid));
@@ -261,7 +262,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
     /**
      * We are a good plugin and don't invent our own UI/validation code path.
      *
-     * @return boolean
+     * @return bool
      */
     public function use_standard_editing_ui() {
         return true;
@@ -315,7 +316,6 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @param context $context The context of the instance we are editing
      * @return array of "element_name"=>"error_description" if there are errors,
      *         or an empty array if everything is OK.
-     * @return void
      */
     public function edit_instance_validation($data, $files, $instance, $context) {
         global $DB;
