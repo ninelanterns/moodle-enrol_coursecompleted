@@ -54,11 +54,8 @@ Feature: Enrolment on course completion
     And I am on "Course 2" course homepage
     And I wait until the page is ready
     And I follow "Participants"
-    And I open the autocomplete suggestions list
-    And I click on "Role: Student" item in the autocomplete list
-    When I click on "//a[@title='Edit']" "xpath_element"
-    Then I should see "2030"
-    And I should see "4"
+    Then I should see "Username 1"
+    And I should see "Teacher 1"
     And I log out
 
   Scenario: Later start date
@@ -143,23 +140,6 @@ Feature: Enrolment on course completion
     And I am on "Course 2" course homepage
     And I wait until the page is ready
     And I follow "Participants"
-    And I wait until the page is ready
-    When I click on "//a[@data-action='unenrol']" "xpath_element"
-    And I click on "Unenrol" "button" in the "Unenrol" "dialogue"
-    And I click on "//a[@title='Unenrol']" "xpath_element"
-    And I click on "Continue" "button"
-    And I wait until the page is ready
     Then I should not see "Username 1"
     And I should not see "Teacher 1"
-    When I am on "Course 2" course homepage
-    And I navigate to "Users > Enrolment methods" in current page administration
-    And I wait until the page is ready
-    And I click on "[aria-label='Enrol users']" "css_element" in the "tr.lastrow" "css_element"
-    Then I should see "Username 1"
-    And I press "Enrol users"
-    Then I should see "1 Users enrolled"
-    And I am on "Course 2" course homepage
-    And I follow "Participants"
-    And I wait until the page is ready
-    Then I should see "Username 1" in the "participants" "table"
     And I log out

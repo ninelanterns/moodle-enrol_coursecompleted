@@ -196,14 +196,6 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
     }
 
     /**
-     * Test privacy.
-     */
-    public function test_privacy() {
-        $privacy = new enrol_coursecompleted\privacy\provider();
-        $this->assertEquals($privacy->get_reason(), 'privacy:metadata');
-    }
-
-    /**
      * Test invalid instance.
      */
     public function test_invalid_instance() {
