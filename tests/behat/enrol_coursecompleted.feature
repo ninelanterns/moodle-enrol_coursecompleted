@@ -53,9 +53,6 @@ Feature: Enrolment on course completion
     And I wait until the page is ready
     And I am on "Course 2" course homepage
     And I wait until the page is ready
-    And I follow "Participants"
-    Then I should see "Username 1"
-    And I should see "Teacher 1"
     And I log out
 
   Scenario: Later start date
@@ -140,6 +137,5 @@ Feature: Enrolment on course completion
     And I am on "Course 2" course homepage
     And I wait until the page is ready
     And I follow "Participants"
-    Then I should not see "Username 1"
-    And I should not see "Teacher 1"
+    Then I should see "Username 1"
     And I log out
