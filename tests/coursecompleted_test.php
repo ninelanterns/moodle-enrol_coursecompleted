@@ -72,7 +72,8 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $this->student = $generator->create_user();
         $manualplugin = enrol_get_plugin('manual');
         $instance = $DB->get_record('enrol', ['courseid' => $this->course2->id, 'enrol' => 'manual'], '*', MUST_EXIST);
-        $manualplugin->enrol_user($instance, $this->student->id);
+        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
+        $manualplugin->enrol_user($instance, $this->student->id, $studentrole->id);
     }
 
     /**
@@ -271,7 +272,7 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $this->assertEquals('', $this->plugin->enrol_page_hook($this->instance));
         $this->assertEquals(0, count($this->plugin->get_info_icons([$this->instance])));
         $this->setUser($this->student);
-        $this->assertEquals(0, count($this->plugin->get_info_icons([$this->instance])));
+        $this->assertEquals(1, count($this->plugin->get_info_icons([$this->instance])));
         $page = new moodle_page();
         $page->set_context(context_course::instance($this->course1->id));
         $page->set_course($this->course1);
