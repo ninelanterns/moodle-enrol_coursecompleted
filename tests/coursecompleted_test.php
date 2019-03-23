@@ -272,7 +272,7 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $this->assertEquals('', $this->plugin->enrol_page_hook($this->instance));
         $this->assertEquals(0, count($this->plugin->get_info_icons([$this->instance])));
         $this->setUser($this->student);
-        $this->assertEquals(0, count($this->plugin->get_info_icons([$this->instance])));
+        $this->assertEquals(1, count($this->plugin->get_info_icons([$this->instance])));
         $page = new moodle_page();
         $page->set_context(context_course::instance($this->course1->id));
         $page->set_course($this->course1);
@@ -296,7 +296,7 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $tmp = $this->plugin->enrol_page_hook($this->instance);
         $this->assertContains('Test course 2', $tmp);
         $this->assertContains('You will be enrolled in this course when you complete course', $tmp);
-        $this->assertEquals(0, count($this->plugin->get_info_icons([$this->instance])));
+        $this->assertEquals(1, count($this->plugin->get_info_icons([$this->instance])));
         $student = $generator->create_user();
         $generator->enrol_user($student->id, $this->course2->id, 5);
         $this->setUser($student);
