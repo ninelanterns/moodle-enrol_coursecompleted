@@ -137,8 +137,11 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
 
         $generator = $this->getDataGenerator();
         $course1 = $generator->create_course(['shortname' => 'B1']);
+        $context1 = context_course::instance($course1->id);
         $course2 = $generator->create_course(['shortname' => 'B2']);
+        $context2 = context_course::instance($course2->id);
         $course3 = $generator->create_course(['shortname' => 'B3', 'enablecompletion' => 1]);
+        $context3 = context_course::instance($course3->id);
         $studentrole = $DB->get_record('role', ['shortname' => 'student']);
         $this->setAdminUser();
         $params = ['customint1' => $course3->id, 'roleid' => $studentrole->id, 'enrolperiod' => 3];
@@ -148,9 +151,9 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $manualplugin = enrol_get_plugin('manual');
         $instance = $DB->get_record('enrol', ['courseid' => $course3->id, 'enrol' => 'manual'], '*', MUST_EXIST);
         $manualplugin->enrol_user($instance, $this->student->id, $studentrole->id);
-        $this->assertFalse(is_enrolled(context_course::instance($course1->id), $this->student->id, '', true));
-        $this->assertFalse(is_enrolled(context_course::instance($course2->id), $this->student->id, '', true));
-        $this->assertTrue(is_enrolled(context_course::instance($course3->id), $this->student->id, '', true));
+        $this->assertFalse(is_enrolled($context1, $this->student->id, '', true));
+        $this->assertFalse(is_enrolled($context2, $this->student->id, '', true));
+        $this->assertTrue(is_enrolled($context3, $this->student->id, '', true));
         mark_user_dirty($this->student->id);
         $PAGE->set_url('/enrol/editinstance.php');
         $manager1 = new course_enrolment_manager($PAGE, $course1);
@@ -162,13 +165,13 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $compevent = \core\event\course_completed::create([
             'objectid' => $course1->id,
             'relateduserid' => $this->student->id,
-            'context' => context_course::instance($course3->id),
+            'context' => $context3,
             'courseid' => $course3->id,
             'other' => ['relateduserid' => $this->student->id]]);
         $observer = new enrol_coursecompleted_observer();
         $observer->enroluser($compevent);
-        $this->assertTrue(is_enrolled(context_course::instance($course1->id), $this->student->id, '', true));
-        $this->assertTrue(is_enrolled(context_course::instance($course2->id), $this->student->id, '', true));
+        $this->assertTrue(is_enrolled($context1, $this->student->id, '', true));
+        $this->assertTrue(is_enrolled($context2, $this->student->id, '', true));
         $this->assertCount(1, $manager1->get_user_enrolments($this->student->id));
         $ueinstance = $DB->get_record('user_enrolments', ['enrolid' => $id1, 'userid' => $this->student->id]);
         $this->assertEquals(0, $ueinstance->timestart);
@@ -180,15 +183,15 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $trace = new null_progress_trace();
         $this->plugin->process_expirations($trace, $course1->id);
         mark_user_dirty($this->student->id);
-        $this->assertFalse(is_enrolled(context_course::instance($course1->id), $this->student->id, '', true));
+        $this->assertFalse(is_enrolled($context1, $this->student->id, '', true));
         $this->assertCount(1, $manager1->get_user_enrolments($this->student->id));
-        $this->assertTrue(is_enrolled(context_course::instance($course2->id), $this->student->id, '', true));
+        $this->assertTrue(is_enrolled($context2, $this->student->id, '', true));
         $this->assertCount(1, $manager2->get_user_enrolments($this->student->id));
         $this->plugin->set_config('expiredaction', ENROL_EXT_REMOVED_UNENROL);
         sleep(4);
         $this->plugin->process_expirations($trace, $course2->id);
         mark_user_dirty($this->student->id);
-        $this->assertFalse(is_enrolled(context_course::instance($course2->id), $this->student->id));
+        $this->assertFalse(is_enrolled($context2, $this->student->id));
         $manager2 = new course_enrolment_manager($PAGE, $course2);
         $this->assertCount(0, $manager2->get_user_enrolments($this->student->id));
     }
