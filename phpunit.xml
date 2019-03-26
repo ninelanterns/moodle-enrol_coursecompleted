@@ -43,7 +43,6 @@
                     <file>manage.php</file>
                     <file>version.php</file>
                     <file>settings.php</file>
-                    <file>db/access.php</file>
                 </exclude>
             </whitelist>
         </filter>
