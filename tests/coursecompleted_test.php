@@ -181,8 +181,10 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $this->plugin->process_expirations($trace, $course1->id);
         mark_user_dirty($this->student->id);
         $this->assertFalse(is_enrolled(context_course::instance($course1->id), $this->student->id, '', true));
+        $manager1 = new course_enrolment_manager($PAGE, $course1);
         $this->assertCount(1, $manager1->get_user_enrolments($this->student->id));
         $this->assertTrue(is_enrolled(context_course::instance($course2->id), $this->student->id, '', true));
+        $manager2 = new course_enrolment_manager($PAGE, $course2);
         $this->assertCount(1, $manager2->get_user_enrolments($this->student->id));
         $this->plugin->set_config('expiredaction', ENROL_EXT_REMOVED_UNENROL);
         sleep(4);
