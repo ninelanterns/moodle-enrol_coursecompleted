@@ -74,4 +74,3 @@ Feature: Duration Enrolment on course completion
     And I am on "Course 2" course homepage
     Then I should see "Enrolment options"
     And I log out
-    
