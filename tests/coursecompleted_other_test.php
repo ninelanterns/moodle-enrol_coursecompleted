@@ -59,6 +59,9 @@ class enrol_coursecompleted_other_testcase extends advanced_testcase {
         require_once($CFG->dirroot . '/enrol/coursecompleted/db/tasks.php');
         require_once($CFG->dirroot . '/enrol/coursecompleted/db/access.php');
         require_once($CFG->dirroot . '/enrol/coursecompleted/db/events.php');
+        $this->expectException('moodle_exception');
+        $this->expectExceptionMessage('A required parameter (enrolid) was missing');
+        require_once($CFG->dirroot . '/enrol/coursecompleted/manage.php');
     }
 
     /**

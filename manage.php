@@ -23,8 +23,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require('../../config.php');
-require_once($CFG->dirroot.'/enrol/coursecompleted/lib.php');
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/enrol/coursecompleted/lib.php');
 
 $enrolid = required_param('enrolid', PARAM_INT);
 $action = optional_param('action', '', PARAM_RAW);
