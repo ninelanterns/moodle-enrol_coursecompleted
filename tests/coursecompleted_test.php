@@ -172,13 +172,13 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $this->assertCount(1, $manager1->get_user_enrolments($this->student->id));
         $ueinstance = $DB->get_record('user_enrolments', ['enrolid' => $id1, 'userid' => $this->student->id]);
         $this->assertEquals(0, $ueinstance->timestart);
-        $this->assertEquals(time() + 3, $ueinstance->timeend);
+        $this->assertNotEquals(0, $ueinstance->timeend);
         $ueinstance = $DB->get_record('user_enrolments', ['enrolid' => $id2, 'userid' => $this->student->id]);
         $this->assertEquals(0, $ueinstance->timestart);
         $this->assertEquals(time() + 6, $ueinstance->timeend);
         sleep(3);
         $trace = new null_progress_trace();
-        $this->plugin->process_expirations($trace, $course1->id);
+        $this->plugin->sync($trace);
         mark_user_dirty($this->student->id);
         $this->assertFalse(is_enrolled(context_course::instance($course1->id), $this->student->id, '', true));
         $manager1 = new course_enrolment_manager($PAGE, $course1);
@@ -188,7 +188,7 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $this->assertCount(1, $manager2->get_user_enrolments($this->student->id));
         $this->plugin->set_config('expiredaction', ENROL_EXT_REMOVED_UNENROL);
         sleep(4);
-        $this->plugin->process_expirations($trace, $course2->id);
+        $this->plugin->sync($trace);
         mark_user_dirty($this->student->id);
         $this->assertFalse(is_enrolled(context_course::instance($course2->id), $this->student->id));
         $manager2 = new course_enrolment_manager($PAGE, $course2);
@@ -211,6 +211,8 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $manager2 = new course_enrolment_manager($PAGE, $this->course1);
         $this->assertCount(1, $manager2->get_user_enrolments($this->student->id));
         $this->plugin->sync(new null_progress_trace());
+        $manager2 = new course_enrolment_manager($PAGE, $this->course1);
+        $this->assertCount(1, $manager2->get_user_enrolments($this->student->id));
     }
 
     /**
@@ -225,51 +227,6 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $ue = reset($enrolments);
         $actions = $this->plugin->get_user_enrolment_actions($manager, $ue);
         $this->assertCount(2, $actions);
-    }
-
-    /**
-     * Test privacy.
-     */
-    public function test_privacy() {
-        $privacy = new enrol_coursecompleted\privacy\provider();
-        $this->assertEquals($privacy->get_reason(), 'privacy:metadata');
-    }
-
-    /**
-     * Test invalid instance.
-     */
-    public function test_invalid_instance() {
-        $tst = new stdClass();
-        $tst->enrol = 'wrong';
-        $this->expectException('moodle_exception');
-        $this->expectExceptionMessage('invalid enrol instance!');
-        $this->assertEquals(0, count($this->plugin->get_action_icons($tst)));
-    }
-
-    /**
-     * Test invalid role.
-     */
-    public function test_invalid_role() {
-        global $DB;
-        $generator = $this->getDataGenerator();
-        $course1 = $generator->create_course(['shortname' => 'B1', 'enablecompletion' => 1]);
-        $course2 = $generator->create_course(['shortname' => 'B2', 'enablecompletion' => 1]);
-        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
-        $this->setAdminUser();
-        $id = $this->plugin->add_instance($course1, ['customint1' => $course2->id, 'roleid' => 9999]);
-        $instance = $DB->get_record('enrol', ['id' => $id]);
-        $manualplugin = enrol_get_plugin('manual');
-        $instance = $DB->get_record('enrol', ['courseid' => $course2->id, 'enrol' => 'manual'], '*', MUST_EXIST);
-        $manualplugin->enrol_user($instance, $this->student->id, $studentrole->id);
-        $compevent = \core\event\course_completed::create([
-            'objectid' => $course2->id,
-            'relateduserid' => $this->student->id,
-            'context' => context_course::instance($course2->id),
-            'courseid' => $course2->id,
-            'other' => ['relateduserid' => $this->student->id]]);
-        $observer = new enrol_coursecompleted_observer();
-        $observer->enroluser($compevent);
-        $this->assertDebuggingCalled("Role does not exist");
     }
 
     /**

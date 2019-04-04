@@ -35,7 +35,7 @@ Feature: Duration Enrolment on course completion
     And I navigate to "Users > Enrolment methods" in current page administration
     And I select "Course completed enrolment" from the "Add method" singleselect
 
-  Scenario: Duration
+  Scenario: Course completion with duration set
     When I set the following fields to these values:
        | Course                    | Course 1 |
        | id_enrolperiod_enabled    | 1        |
@@ -61,14 +61,43 @@ Feature: Duration Enrolment on course completion
     Then I should see "Username 1"
     And I wait "3" seconds
     And I trigger cron
-    And I run all adhoc tasks
-    And I trigger cron
-    And I run all adhoc tasks
     And I am on "Course 2" course homepage
     And I wait until the page is ready
     And I follow "Participants"
-    #TODO: The student should have been unenrolled.
-    Then I should see "Not current"
+    Then I should not see "Username 1"
+    And I log out
+    And I log in as "user1"
+    And I am on "Course 2" course homepage
+    Then I should see "Enrolment options"
+    And I log out
+
+  Scenario: Course completion with end date set
+    When I set the following fields to these values:
+       | Course                    | Course 1 |
+       | id_enrolenddate_enabled   | 1        |
+    And I press "Add method"
+    And I am on "Course 2" course homepage
+    And I log out
+    And I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I navigate to "Reports > Course completion" in current page administration
+    And I follow "Click to mark user complete"
+    And I wait until the page is ready
+    And I run the scheduled task "core\task\completion_regular_task"
+    And I run all adhoc tasks
+    And I wait until the page is ready
+    And I am on "Course 2" course homepage
+    And I wait until the page is ready
+    And I follow "Participants"
+    And I open the autocomplete suggestions list
+    And I click on "Role: Student" item in the autocomplete list
+    Then I should see "Username 1"
+    And I wait "3" seconds
+    And I trigger cron
+    And I am on "Course 2" course homepage
+    And I wait until the page is ready
+    And I follow "Participants"
+    Then I should not see "Username 1"
     And I log out
     And I log in as "user1"
     And I am on "Course 2" course homepage
