@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Course completed enrol plugin version specification.
+ * Task definition for enrol_coursecompleted.
  *
  * @package   enrol_coursecompleted
  * @copyright 2017 eWallah (www.eWallah.net)
@@ -25,8 +25,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2019040504;
-$plugin->requires = 2017111300;
-$plugin->release = '3.4';
-$plugin->maturity = MATURITY_STABLE;
-$plugin->component = 'enrol_coursecompleted';
+$tasks = [['classname' => '\enrol_coursecompleted\task\process_expirations', 'blocking' => 0,
+           'minute' => '*', 'hour' => '*', 'day' => '*', 'month' => '*', 'dayofweek' => '*', 'disabled' => 0]];
