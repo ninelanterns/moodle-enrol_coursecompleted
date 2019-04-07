@@ -55,7 +55,7 @@ Feature: Duration Enrolment on course completion
     And I am on "Course 2" course homepage
     And I wait until the page is ready
     And I follow "Participants"
-    Then I should see "Username 1"
+    Then I should not see "Username 1"
     And I wait "3" seconds
     And I trigger cron
     And I am on "Course 2" course homepage
@@ -86,7 +86,7 @@ Feature: Duration Enrolment on course completion
     And I am on "Course 2" course homepage
     And I wait until the page is ready
     And I follow "Participants"
-    Then I should see "Username 1"
+    Then I not should see "Username 1"
     And I wait "3" seconds
     And I trigger cron
     And I am on "Course 2" course homepage
