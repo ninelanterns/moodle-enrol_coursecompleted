@@ -55,9 +55,6 @@ Feature: Duration Enrolment on course completion
     And I am on "Course 2" course homepage
     And I wait until the page is ready
     And I follow "Participants"
-    And I open the autocomplete suggestions list
-    And I click on "Role: Student" item in the autocomplete list
-    When I click on "//a[@title='Edit']" "xpath_element"
     Then I should see "Username 1"
     And I wait "3" seconds
     And I trigger cron
@@ -89,8 +86,6 @@ Feature: Duration Enrolment on course completion
     And I am on "Course 2" course homepage
     And I wait until the page is ready
     And I follow "Participants"
-    And I open the autocomplete suggestions list
-    And I click on "Role: Student" item in the autocomplete list
     Then I should see "Username 1"
     And I wait "3" seconds
     And I trigger cron
